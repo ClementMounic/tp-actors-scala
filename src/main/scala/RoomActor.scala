@@ -23,14 +23,17 @@ case class RoomActor(name: String) {
   private def handle(posts: SortedSet[Post]): Behavior[Message] = {
     Behaviors.receiveMessage {
       case Message.CreatePost(author, content) =>
-        ???
+        val post = Post(UUID.randomUUID(), author, OffsetDateTime.now(), content)
+        handle(posts + post)
       case Message.ListPosts(replyTo) =>
-        ???
+        replyTo ! posts
+        Behaviors.same
       case Message.LatestPost(replyTo) =>
-        ???
+        replyTo ! posts.lastOption
+        Behaviors.same
       case Message.GetPost(id, replyTo) =>
-        ???
-
+        replyTo ! posts.find(_.id ==id)
+        Behaviors.same
     }
   }
 }
